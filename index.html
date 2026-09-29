@@ -677,10 +677,78 @@
         // Admin Credentials Guard
         const ADMIN_EMAIL = "itsnarqotix@gmail.com";
 
+        // Global State Variables
+        window.selectedPlan = "Instant Demo - ₹1";
+        let authMode = 'signin';
+        let currentUser = null;
+        let pendingRequirement = null;
+
         /* Mobile Drawer Toggle */
         window.toggleMobileMenu = function() {
             const menu = document.getElementById('mobileMenu');
             if (menu) menu.classList.toggle('hidden');
+        };
+
+        /* Auth & Payment Modal Toggles */
+        window.toggleAuthModal = function(show) {
+            const modal = document.getElementById('authModal');
+            if (modal) modal.classList.toggle('hidden', !show);
+            const alertBox = document.getElementById('authAlert');
+            if (alertBox) alertBox.classList.add('hidden');
+        };
+
+        window.togglePaymentModal = function(show) {
+            const modal = document.getElementById('paymentModal');
+            if (modal) modal.classList.toggle('hidden', !show);
+        };
+
+        /* Switch Auth Tab (Sign In vs Create Account) */
+        window.switchAuthTab = function(mode) {
+            authMode = mode;
+            const tabSignIn = document.getElementById('tabSignIn');
+            const tabSignUp = document.getElementById('tabSignUp');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const alertBox = document.getElementById('authAlert');
+
+            if (alertBox) alertBox.classList.add('hidden');
+
+            if (mode === 'signup') {
+                tabSignUp.className = "text-xs font-bold text-emerald-400 border-b-2 border-emerald-400 pb-1.5 transition-all";
+                tabSignIn.className = "text-xs font-bold text-gray-400 hover:text-white pb-1.5 transition-all";
+                if (submitBtn) submitBtn.textContent = "Create New Account";
+            } else {
+                tabSignIn.className = "text-xs font-bold text-emerald-400 border-b-2 border-emerald-400 pb-1.5 transition-all";
+                tabSignUp.className = "text-xs font-bold text-gray-400 hover:text-white pb-1.5 transition-all";
+                if (submitBtn) submitBtn.textContent = "Sign In to Broxee";
+            }
+        };
+
+        /* Requirement Builder Plan Selector */
+        window.openRequirementWizard = function(planName) {
+            window.selectedPlan = planName;
+            const wizardDisplay = document.getElementById('wizardPlanDisplay');
+            if (wizardDisplay) wizardDisplay.textContent = planName;
+            window.navigateTo('builder');
+        };
+
+        /* Live Theme Preview Switcher */
+        window.applyThemePreview = function(themeName) {
+            const frame = document.getElementById('miniPreviewFrame');
+            const badge = document.getElementById('activeThemeBadge');
+            if (!frame || !badge) return;
+
+            badge.textContent = themeName;
+            frame.className = "p-3 sm:p-4 rounded-xl border transition-all duration-300 ";
+
+            if (themeName.includes('Minimalist')) {
+                frame.className += "theme-minimal-white";
+            } else if (themeName.includes('Luxury')) {
+                frame.className += "theme-luxury-gold";
+            } else if (themeName.includes('Neon')) {
+                frame.className += "theme-neon-cyber";
+            } else {
+                frame.className += "theme-dark-glass";
+            }
         };
 
         /* Verification Modal Control */
@@ -703,7 +771,6 @@
                     if (currentUser.emailVerified) {
                         alert("🎉 Email verified successfully! You can now proceed to payment and submit your requirements.");
                         window.toggleVerificationModal(false);
-                        
                         const dashUserEmail = document.getElementById('dashUserEmail');
                         if (dashUserEmail) dashUserEmail.textContent = currentUser.email + ' (Verified ✅)';
                     } else {
@@ -743,9 +810,7 @@
                 window.loadAdminOrders();
             }
 
-            // Save active view state so refreshing doesn't send user back to home
             localStorage.setItem('broxee_active_view', viewId);
-
             document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
             const targetView = document.getElementById(`view-${viewId}`);
             if (targetView) targetView.classList.remove('hidden');
@@ -765,11 +830,8 @@
 
         const appId = "broxee-dev";
         let app, auth, db;
-        let authMode = 'signin';
-        let currentUser = null;
-        let pendingRequirement = null;
 
-        // Instant UI Restoration Hint (Prevents flicker on page refresh)
+        // Instant UI Restoration Hint on Page Refresh
         const cachedEmail = localStorage.getItem('broxee_user_email');
         const cachedName = localStorage.getItem('broxee_user_name');
         const savedView = localStorage.getItem('broxee_active_view');
@@ -777,7 +839,10 @@
         if (cachedEmail) {
             const authBtnText = document.getElementById('authBtnText');
             if (authBtnText) authBtnText.textContent = cachedName || cachedEmail.split('@')[0];
+            const dashNavBtn = document.getElementById('dashboardNavBtn');
+            if (dashNavBtn) dashNavBtn.classList.remove('hidden');
         }
+
         if (savedView && savedView !== 'home') {
             const target = document.getElementById(`view-${savedView}`);
             if (target) {
@@ -814,13 +879,14 @@
             auth = getAuth(app);
             db = getFirestore(app);
 
-            // Set browser local persistence
+            // Enforce Local Persistence across Browser Restarts
             setPersistence(auth, browserLocalPersistence).catch((err) => {
                 console.log("Auth persistence note:", err);
             });
 
+            /* Auth State Observer */
             onAuthStateChanged(auth, (user) => {
-                currentUser = auth.currentUser || user;
+                currentUser = user;
 
                 const authBtnText = document.getElementById('authBtnText');
                 const dashNavBtn = document.getElementById('dashboardNavBtn');
@@ -841,7 +907,6 @@
                     dashNavBtn?.classList.remove('hidden');
                     mobileDashNavBtn?.classList.remove('hidden');
 
-                    // Show Admin Controls ONLY if user matches admin email
                     if (currentUser.email === ADMIN_EMAIL) {
                         adminNavBtn?.classList.remove('hidden');
                         mobileAdminNavBtn?.classList.remove('hidden');
@@ -854,20 +919,10 @@
 
                     loadUserDashboard(currentUser.uid);
 
-                    // Restore previous screen view if refreshing
-                    const savedView = localStorage.getItem('broxee_active_view');
-                    if (savedView && savedView !== 'home') {
-                        window.navigateTo(savedView);
+                    const activeView = localStorage.getItem('broxee_active_view');
+                    if (activeView && activeView !== 'home') {
+                        window.navigateTo(activeView);
                     }
-
-                    // Background non-blocking verification reload check
-                    user.reload().then(() => {
-                        if (auth.currentUser) {
-                            currentUser = auth.currentUser;
-                            if (dashUserEmail) dashUserEmail.textContent = currentUser.email + (currentUser.emailVerified ? ' (Verified ✅)' : ' (Unverified ⚠️)');
-                        }
-                    }).catch(err => console.log("Background auth sync note:", err));
-
                 } else {
                     localStorage.removeItem('broxee_user_email');
                     localStorage.removeItem('broxee_user_name');
@@ -882,6 +937,64 @@
         } catch (e) {
             console.log("Firebase initialized in preview mode.");
         }
+
+        /* Email & Password Authentication Handler */
+        window.handleAuthSubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            const alertBox = document.getElementById('authAlert');
+
+            const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
+            if (!gmailRegex.test(email)) {
+                if (alertBox) {
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30";
+                    alertBox.textContent = "Please enter a valid Gmail address ending with @gmail.com";
+                    alertBox.classList.remove('hidden');
+                }
+                return;
+            }
+
+            try {
+                if (authMode === 'signup') {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    
+                    const actionCodeSettings = {
+                        url: window.location.origin,
+                        handleCodeInApp: true
+                    };
+                    await sendEmailVerification(user, actionCodeSettings);
+
+                    window.toggleAuthModal(false);
+                    window.showVerificationNotice(user.email);
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.toggleAuthModal(false);
+                }
+            } catch (err) {
+                if (alertBox) {
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30";
+                    alertBox.textContent = err.message || "Authentication failed. Check your credentials.";
+                    alertBox.classList.remove('hidden');
+                }
+            }
+        };
+
+        /* Google One-Click OAuth Handler */
+        window.handleGoogleSignIn = async function() {
+            if (!auth) return;
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                await saveUserRecord(user);
+                window.toggleAuthModal(false);
+            } catch (err) {
+                console.error("Google sign-in error:", err);
+                alert("Google Sign-In error: " + err.message);
+            }
+        };
 
         window.handleSignOut = async function() {
             if (auth) {
@@ -902,11 +1015,10 @@
             e.preventDefault();
 
             if (!currentUser) {
-                toggleAuthModal(true);
+                window.toggleAuthModal(true);
                 return;
             }
 
-            // Auto-reload user profile from Firebase to check if email was verified in another tab
             if (auth && auth.currentUser) {
                 try {
                     await auth.currentUser.reload();
@@ -916,7 +1028,6 @@
                 }
             }
 
-            // STRICT EMAIL VERIFICATION GUARD: BLOCK UNVERIFIED EMAILS FROM ORDERING
             if (!currentUser.emailVerified && currentUser.providerData?.[0]?.providerId === 'password') {
                 window.showVerificationNotice(currentUser.email);
                 return;
@@ -939,16 +1050,15 @@
             if (document.getElementById('featPayment').checked) features.push("Payment Gateway");
 
             pendingRequirement = {
-                plan: selectedPlan,
+                plan: window.selectedPlan,
                 name, business, phone, callTime, industry, style,
                 features, notes
             };
 
-            // Extract numeric price for UPI payload
-            const amountMatch = selectedPlan.match(/₹([\d,]+)/);
+            const amountMatch = window.selectedPlan.match(/₹([\d,]+)/);
             const rawAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : '1';
 
-            document.getElementById('payPlanName').textContent = selectedPlan.split('-')[0].trim();
+            document.getElementById('payPlanName').textContent = window.selectedPlan.split('-')[0].trim();
             document.getElementById('payPlanPrice').textContent = `₹${rawAmount}`;
 
             const upiId = "broxee@ptaxis"; 
@@ -961,7 +1071,7 @@
             const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
 
             document.getElementById('qrCodeImage').src = qrImageUrl;
-            togglePaymentModal(true);
+            window.togglePaymentModal(true);
         };
 
         window.copyUpiId = function() {
@@ -983,7 +1093,6 @@
             }
         };
 
-        /* Local storage fallback memory array for offline/preview testing */
         let localOrdersStore = [];
 
         /* Payment Confirmation Handler */
@@ -1002,7 +1111,7 @@
                 id: 'ord-' + Date.now(),
                 userId: userId,
                 userEmail: userEmail,
-                plan: pendingRequirement ? pendingRequirement.plan : selectedPlan,
+                plan: pendingRequirement ? pendingRequirement.plan : window.selectedPlan,
                 amount: document.getElementById('payPlanPrice').textContent,
                 utr: utr,
                 status: "Pending Verification ⏳",
@@ -1012,7 +1121,6 @@
 
             localOrdersStore.unshift(purchaseData);
 
-            /* Save Purchase to Firebase Firestore */
             if (db) {
                 try {
                     const userPurchasesCol = collection(db, 'artifacts', appId, 'users', userId, 'purchases');
@@ -1025,7 +1133,6 @@
                 }
             }
 
-            /* Synthesize WhatsApp Notification Message */
             let message = `🚀 *NEW ORDER SUBMITTED - BROXEE.IN*\n\n`;
             message += `📌 *Plan:* ${purchaseData.plan}\n`;
             message += `💰 *Amount Paid:* ${purchaseData.amount}\n`;
@@ -1038,15 +1145,13 @@
             message += `📝 *Notes:* ${pendingRequirement?.notes || 'None'}\n\n`;
             message += ` Please verify UTR & confirm order!`;
 
-            const encodedMessage = encodeURIComponent(message);
-
             btn.disabled = false;
             btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Submit Payment & Start Build`;
-            togglePaymentModal(false);
+            window.togglePaymentModal(false);
 
             loadUserDashboard(userId);
-            navigateTo('dashboard');
-            window.open(`https://wa.me/918788561324?text=${encodedMessage}`, '_blank');
+            window.navigateTo('dashboard');
+            window.open(`https://wa.me/918788561324?text=${encodeURIComponent(message)}`, '_blank');
         };
 
         async function loadUserDashboard(uid) {
@@ -1348,3 +1453,9 @@
     </script>
 </body>
 </html>
+```
+
+### Key Changes Applied:
+1. **Window-bound Handlers**: Bound `openRequirementWizard`, `toggleAuthModal`, `switchAuthTab`, `handleAuthSubmit`, `handleGoogleSignIn`, `applyThemePreview`, and `togglePaymentModal` explicitly to `window` inside the ES module block.
+2. **Persistence Restoration**: `setPersistence(auth, browserLocalPersistence)` is executed right at setup.
+3. **Smooth Local Storage Sync**: Local storage keys (`broxee_user_email` and `broxee_active_view`) render the authenticated UI immediately on page reload while Firebase verifies the session token in the background.
