@@ -769,6 +769,23 @@
         let currentUser = null;
         let pendingRequirement = null;
 
+        // Instant UI Restoration Hint (Prevents flicker on page refresh)
+        const cachedEmail = localStorage.getItem('broxee_user_email');
+        const cachedName = localStorage.getItem('broxee_user_name');
+        const savedView = localStorage.getItem('broxee_active_view');
+
+        if (cachedEmail) {
+            const authBtnText = document.getElementById('authBtnText');
+            if (authBtnText) authBtnText.textContent = cachedName || cachedEmail.split('@')[0];
+        }
+        if (savedView && savedView !== 'home') {
+            const target = document.getElementById(`view-${savedView}`);
+            if (target) {
+                document.querySelectorAll('.page-view').forEach(v => v.classList.add('hidden'));
+                target.classList.remove('hidden');
+            }
+        }
+
         async function saveUserRecord(user) {
             if (!db || !user) return;
             try {
@@ -797,22 +814,14 @@
             auth = getAuth(app);
             db = getFirestore(app);
 
-            // Force local browser persistence (localStorage + IndexedDB)
+            // Set browser local persistence
             setPersistence(auth, browserLocalPersistence).catch((err) => {
-                console.log("Auth persistence initialization note:", err);
+                console.log("Auth persistence note:", err);
             });
 
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    try {
-                        // Refresh user token & email verification status from Firebase
-                        await user.reload();
-                    } catch(e) {
-                        console.log("Auth reload note:", e);
-                    }
-                }
-
+            onAuthStateChanged(auth, (user) => {
                 currentUser = auth.currentUser || user;
+
                 const authBtnText = document.getElementById('authBtnText');
                 const dashNavBtn = document.getElementById('dashboardNavBtn');
                 const mobileDashNavBtn = document.getElementById('mobileDashboardNavBtn');
@@ -822,8 +831,12 @@
                 const adminFooterBtn = document.getElementById('adminFooterBtn');
 
                 if (currentUser && !currentUser.isAnonymous) {
+                    const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+                    localStorage.setItem('broxee_user_email', currentUser.email);
+                    localStorage.setItem('broxee_user_name', displayName);
+
                     saveUserRecord(currentUser);
-                    if (authBtnText) authBtnText.textContent = currentUser.displayName || currentUser.email.split('@')[0];
+                    if (authBtnText) authBtnText.textContent = displayName;
                     if (dashUserEmail) dashUserEmail.textContent = currentUser.email + (currentUser.emailVerified ? ' (Verified ✅)' : ' (Unverified ⚠️)');
                     dashNavBtn?.classList.remove('hidden');
                     mobileDashNavBtn?.classList.remove('hidden');
@@ -846,7 +859,18 @@
                     if (savedView && savedView !== 'home') {
                         window.navigateTo(savedView);
                     }
+
+                    // Background non-blocking verification reload check
+                    user.reload().then(() => {
+                        if (auth.currentUser) {
+                            currentUser = auth.currentUser;
+                            if (dashUserEmail) dashUserEmail.textContent = currentUser.email + (currentUser.emailVerified ? ' (Verified ✅)' : ' (Unverified ⚠️)');
+                        }
+                    }).catch(err => console.log("Background auth sync note:", err));
+
                 } else {
+                    localStorage.removeItem('broxee_user_email');
+                    localStorage.removeItem('broxee_user_name');
                     if (authBtnText) authBtnText.textContent = "Sign In";
                     dashNavBtn?.classList.add('hidden');
                     mobileDashNavBtn?.classList.add('hidden');
@@ -858,6 +882,20 @@
         } catch (e) {
             console.log("Firebase initialized in preview mode.");
         }
+
+        window.handleSignOut = async function() {
+            if (auth) {
+                try {
+                    await signOut(auth);
+                    localStorage.removeItem('broxee_user_email');
+                    localStorage.removeItem('broxee_user_name');
+                    localStorage.removeItem('broxee_active_view');
+                    window.navigateTo('home');
+                } catch(e) {
+                    console.log("Sign out error:", e);
+                }
+            }
+        };
 
         /* Form Submission -> Triggers QR Payment Modal */
         window.handleFormSubmission = async function(e) {
@@ -1309,4 +1347,4 @@
         };
     </script>
 </body>
-                                                                                                        </html>
+</html>
