@@ -694,10 +694,14 @@
         window.resendVerificationLink = async function() {
             if (currentUser && !currentUser.emailVerified) {
                 try {
-                    await sendEmailVerification(currentUser);
-                    alert(`Verification link resent to ${currentUser.email}!`);
+                    const actionCodeSettings = {
+                        url: window.location.origin,
+                        handleCodeInApp: true
+                    };
+                    await sendEmailVerification(currentUser, actionCodeSettings);
+                    alert(`Verification link resent to ${currentUser.email}! Please check your Inbox and Spam folder.`);
                 } catch(e) {
-                    alert("Verification link sent recently. Please check your inbox.");
+                    alert("Verification link sent recently. Please check your inbox or spam folder.");
                 }
             }
         };
@@ -936,11 +940,15 @@
                 if (authMode === 'signup') {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     
-                    // SEND VERIFICATION EMAIL TO ENSURE EMAIL OWNERSHIP
+                    // SEND VERIFICATION EMAIL WITH ACTION CODE REDIRECT TO VERCEL
                     if (userCredential.user && !userCredential.user.emailVerified) {
-                        await sendEmailVerification(userCredential.user);
+                        const actionCodeSettings = {
+                            url: window.location.origin,
+                            handleCodeInApp: true
+                        };
+                        await sendEmailVerification(userCredential.user, actionCodeSettings);
                         alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30";
-                        alertBox.textContent = `Verification email sent to ${email}! Please check your inbox and click the link to verify ownership.`;
+                        alertBox.textContent = `Verification email sent to ${email}! Check Spam/Promotions folder and click the link to verify.`;
                     } else {
                         alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
                         alertBox.textContent = "Account created successfully!";
@@ -968,16 +976,11 @@
                     }
 
                     alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30";
-                    alertBox.textContent = "Logged in via Testing Mode!";
+                    alertBox.textContent = "Demo Mode: Email/Password login disabled in Firebase.";
                     alertBox.classList.remove('hidden');
-                    
-                    setTimeout(() => {
-                        toggleAuthModal(false);
-                        alertBox.classList.add('hidden');
-                    }, 2000);
                 } else {
                     alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30";
-                    alertBox.textContent = err.message || "Authentication error.";
+                    alertBox.textContent = err.message || "Authentication failed.";
                     alertBox.classList.remove('hidden');
                 }
             }
@@ -1458,4 +1461,4 @@
         };
     </script>
 </body>
-                      </html>
+    </html>
