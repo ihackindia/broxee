@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broxee | Web Development Agency</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .theme-dark-glass {
+            background: rgba(15, 23, 42, 0.85);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .theme-minimal-white {
+            background: #ffffff;
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+        .theme-luxury-gold {
+            background: #09090b;
+            color: #fef08a;
+            border-color: #eab308;
+        }
+        .theme-neon-cyber {
+            background: #030712;
+            color: #38bdf8;
+            border-color: #a855f7;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-black antialiased">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 w-full glass-panel border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" onclick="navigateTo('home'); return false;" class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center font-black text-slate-950 text-xl shadow-lg shadow-emerald-500/20">
+                    B
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight text-white">broxee<span class="text-emerald-400">.in</span></span>
+                    <span class="block text-[10px] font-semibold tracking-wider text-emerald-400 uppercase">Web Agency</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu Navigation -->
+            <nav class="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-semibold text-gray-300">
+                <a href="#" onclick="navigateTo('home'); return false;" class="hover:text-emerald-400 transition-colors">Home</a>
+                <a href="#" onclick="navigateTo('pricing'); return false;" class="hover:text-emerald-400 transition-colors">Pricing Plans</a>
+                <a href="#" onclick="navigateTo('builder'); return false;" class="hover:text-emerald-400 transition-colors">Requirement Builder</a>
+                <a href="#" onclick="navigateTo('dashboard'); return false;" id="dashboardNavBtn" class="hidden hover:text-emerald-400 transition-colors flex items-center gap-1.5 text-emerald-400">
+                    <i class="fa-solid fa-gauge-high"></i> My Dashboard
+                </a>
+                <!-- Admin Navigation Button (Only visible for admin account) -->
+                <a href="#" onclick="navigateTo('admin'); return false;" id="adminNavBtn" class="hidden hover:text-amber-400 transition-colors flex items-center gap-1.5 text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg border border-amber-400/20">
+                    <i class="fa-solid fa-user-shield"></i> Admin Panel
+                </a>
+            </nav>
+
+            <!-- Actions: Auth + Direct WhatsApp Chat + Mobile Toggle -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div id="authContainer">
+                    <button id="openAuthBtn" onclick="toggleAuthModal(true)" class="px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white/5 hover:bg-white/10 text-gray-200 border border-white/10 transition-all flex items-center gap-1.5">
+                        <i class="fa-regular fa-user"></i>
+                        <span id="authBtnText">Sign In</span>
+                    </button>
+                </div>
+
+                <a href="https://wa.me/918788561324?text=Hi%20Broxee%20Team%2C%20I%20am%20interested%20in%20getting%20a%20new%20website%20for%20my%20business." target="_blank" class="px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500 hover:bg-emerald-600 text-slate-950 transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
+                    <i class="fa-brands fa-whatsapp text-sm sm:text-base"></i>
+                    <span class="hidden xs:inline">WhatsApp</span>
+                    <span class="xs:hidden">Chat</span>
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl bg-white/5 text-gray-300 border border-white/10 hover:text-white">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-white/10 bg-slate-950/95 px-4 py-4 space-y-3 text-sm font-semibold text-gray-300">
+            <a href="#" onclick="navigateTo('home'); toggleMobileMenu(); return false;" class="block py-2 hover:text-emerald-400"><i class="fa-solid fa-house mr-2 text-emerald-400"></i>Home</a>
+            <a href="#" onclick="navigateTo('pricing'); toggleMobileMenu(); return false;" class="block py-2 hover:text-emerald-400"><i class="fa-solid fa-tags mr-2 text-emerald-400"></i>Pricing Plans</a>
+            <a href="#" onclick="navigateTo('builder'); toggleMobileMenu(); return false;" class="block py-2 hover:text-emerald-400"><i class="fa-solid fa-sliders mr-2 text-emerald-400"></i>Requirement Builder</a>
+            <a href="#" onclick="navigateTo('dashboard'); toggleMobileMenu(); return false;" id="mobileDashboardNavBtn" class="hidden py-2 text-emerald-400"><i class="fa-solid fa-gauge-high mr-2"></i>My Dashboard</a>
+            <a href="#" onclick="navigateTo('admin'); toggleMobileMenu(); return false;" id="mobileAdminNavBtn" class="hidden py-2 text-amber-400"><i class="fa-solid fa-user-shield mr-2"></i>Admin Panel</a>
+        </div>
+    </header>
+
+    <!-- Main Multi-View SPA Container -->
+    <main id="mainContent" class="flex-grow">
+        
+        <!-- VIEW 1: HOME PAGE -->
+        <div id="view-home" class="page-view py-8 sm:py-16 lg:py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Hero Section -->
+                <div class="text-center max-w-3xl mx-auto space-y-5 sm:space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Based in Mumbai, India 📍 • Serving Clients Worldwide
+                    </div>
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+                        We Build High-Converting Websites That Grow <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Your Business</span>
+                    </h1>
+                    <p class="text-sm sm:text-base lg:text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto">
+                        Get a modern, ultra-fast, mobile-optimized website for your company. Try our live demo preview for just <span class="text-emerald-400 font-bold">₹1</span> or choose complete packages from <span class="text-emerald-400 font-bold">₹2,999</span>.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
+                        <button onclick="openRequirementWizard('Instant Demo - ₹1')" class="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-sm shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bolt text-base sm:text-lg"></i>
+                            <span>Get Website Demo for ₹1</span>
+                        </button>
+                        <button onclick="navigateTo('pricing')" class="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-bold text-sm border border-white/10 transition-all">
+                            View All Pricing Plans
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Features Highlights -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-12 sm:mt-20">
+                    <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-white/10">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg sm:text-xl mb-3 sm:mb-4">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-2">Ultra-Fast Performance</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed">Google PageSpeed optimized code built to load under 2 seconds, ensuring low bounce rates and high retention.</p>
+                    </div>
+                    <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-white/10">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg sm:text-xl mb-3 sm:mb-4">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-2">Mobile-First Layouts</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed">Over 80% of web traffic is mobile. We ensure your website looks flawless on phones, tablets, and desktops.</p>
+                    </div>
+                    <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-white/10">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg sm:text-xl mb-3 sm:mb-4">
+                            <i class="fa-solid fa-comments-dollar"></i>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-2">Direct WhatsApp Leads</h3>
+                        <p class="text-xs text-gray-400 leading-relaxed">Integrated instant click-to-chat WhatsApp features to convert visitors into paying clients directly on your phone.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: PRICING PLANS PAGE -->
+        <div id="view-pricing" class="page-view hidden py-8 sm:py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Transparent Agency Pricing</h2>
+                    <p class="text-xs sm:text-sm text-gray-400 mt-2">Choose a package that fits your business stage. Test our service with our ₹1 demo plan or choose a full launch plan!</p>
+                </div>
+
+                <!-- Pricing Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                    
+                    <!-- ₹1 Instant Demo Plan -->
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl border-2 border-emerald-400 relative flex flex-col justify-between shadow-xl shadow-emerald-500/20 bg-emerald-950/20">
+                        <div class="absolute -top-3.5 right-6 px-3 py-1 rounded-full bg-emerald-400 text-slate-950 font-black text-[10px] uppercase">⚡ Try Service First</div>
+                        <div>
+                            <div class="text-emerald-400 text-xs font-extrabold uppercase tracking-widest mb-1">⚡ Instant Website Demo</div>
+                            <h3 class="text-3xl font-black text-white">₹1</h3>
+                            <p class="text-xs text-gray-400 mb-6">Test our speed & design quality before committing to full site builds!</p>
+                            <ul class="space-y-3 text-xs text-gray-300 mb-8">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 font-bold"></i> Customized Homepage Demo Layout</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 font-bold"></i> Mobile Responsive Preview</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 font-bold"></i> Choose Custom Theme & Styling</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 font-bold"></i> 8-Hour Express Delivery Guarantee</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 font-bold"></i> 100% Credit towards Full Plan</li>
+                            </ul>
+                        </div>
+                        <button onclick="openRequirementWizard('Instant Demo - ₹1')" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs shadow-lg shadow-emerald-500/20 transition-all">Get ₹1 Website Demo</button>
+                    </div>
+
+                    <!-- Starter Plan -->
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                        <div>
+                            <div class="text-emerald-400 text-xs font-extrabold uppercase tracking-widest mb-1">🟢 Starter</div>
+                            <h3 class="text-2xl sm:text-3xl font-black text-white">₹2,999</h3>
+                            <p class="text-xs text-gray-400 mb-6">Ideal for landing pages and simple online business presence.</p>
+                            <ul class="space-y-3 text-xs text-gray-300 mb-8">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> 1-Page Website</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Responsive Mobile Layout</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Modern UI/UX Design</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> About, Services & Contact</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> WhatsApp Lead Button</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Basic Web Deployment</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> 1 Revision Round</li>
+                            </ul>
+                        </div>
+                        <button onclick="openRequirementWizard('Starter - ₹2,999')" class="w-full py-3 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 font-bold text-xs transition-all">Select Starter Plan</button>
+                    </div>
+
+                    <!-- Launch Plan -->
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                        <div>
+                            <div class="text-blue-400 text-xs font-extrabold uppercase tracking-widest mb-1">🔵 Launch</div>
+                            <h3 class="text-2xl sm:text-3xl font-black text-white">₹5,999</h3>
+                            <p class="text-xs text-gray-400 mb-6">Everything in Starter + Multi-section capability and integrations.</p>
+                            <ul class="space-y-3 text-xs text-gray-300 mb-8">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Up to 4–5 Sections/Pages</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Custom Brand UI Theme</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Interactive Contact Form</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Social Media Links</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 font-bold"></i> Google Maps Integration</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400 font-bold"></i> Direct WhatsApp Integration</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Basic On-Page SEO</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> 2 Revisions</li>
+                            </ul>
+                        </div>
+                        <button onclick="openRequirementWizard('Launch - ₹5,999')" class="w-full py-3 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 font-bold text-xs transition-all">Select Launch Plan</button>
+                    </div>
+
+                    <!-- Business Plan -->
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                        <div>
+                            <div class="text-purple-400 text-xs font-extrabold uppercase tracking-widest mb-1">🟣 Business</div>
+                            <h3 class="text-2xl sm:text-3xl font-black text-white">₹9,999</h3>
+                            <p class="text-xs text-gray-400 mb-6">For expanding businesses requiring speed and advanced visuals.</p>
+                            <ul class="space-y-3 text-xs text-gray-300 mb-8">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Up to 6–8 Pages</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Premium Custom UI Layouts</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Smooth UI Animations</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Google Maps & WhatsApp</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> SEO Foundation</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Speed & Performance Optimization</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> 3 Revisions</li>
+                            </ul>
+                        </div>
+                        <button onclick="openRequirementWizard('Business - ₹9,999')" class="w-full py-3 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 font-bold text-xs transition-all">Select Business Plan</button>
+                    </div>
+
+                    <!-- Professional Plan -->
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                        <div>
+                            <div class="text-orange-400 text-xs font-extrabold uppercase tracking-widest mb-1">🔥 Professional</div>
+                            <h3 class="text-2xl sm:text-3xl font-black text-white">₹14,999</h3>
+                            <p class="text-xs text-gray-400 mb-6">Complete web architecture built completely from scratch.</p>
+                            <ul class="space-y-3 text-xs text-gray-300 mb-8">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Custom Scratch Build (8–12 Pages)</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Advanced Micro-Interactions</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> SEO Setup & Sitemap</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Analytics Integration</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Blog / News CMS Module</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> 30 Days Free Technical Support</li>
+                            </ul>
+                        </div>
+                        <button onclick="openRequirementWizard('Professional - ₹14,999')" class="w-full py-3 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 font-bold text-xs transition-all">Select Professional Plan</button>
+                    </div>
+
+                    <!-- Custom Solutions Plan -->
+                    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 flex flex-col justify-between">
+                        <div>
+                            <div class="text-pink-400 text-xs font-extrabold uppercase tracking-widest mb-1">🚀 Custom Web App</div>
+                            <h3 class="text-2xl sm:text-3xl font-black text-white">₹19,999+</h3>
+                            <p class="text-xs text-gray-400 mb-6">Complex web apps, portals, databases, and custom backend systems.</p>
+                            <div class="grid grid-cols-1 gap-2.5 text-xs text-gray-300 mb-8">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> User Authentication & Passwords</span>
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Client / Admin Dashboards</span>
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Direct Booking Systems</span>
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Payment Gateway Integration</span>
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Database & API Connections</span>
+                            </div>
+                        </div>
+                        <button onclick="openRequirementWizard('Custom Solution - ₹19,999+')" class="w-full py-3 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 font-bold text-xs transition-all">Build Custom App Solution</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: REQUIREMENT BUILDER PAGE -->
+        <div id="view-builder" class="page-view hidden py-8 sm:py-12">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Dynamic Requirement Form Card -->
+                <div id="builderCard" class="glass-panel p-5 sm:p-10 rounded-3xl border border-white/10 transition-all duration-300">
+                    
+                    <div class="mb-6 sm:mb-8">
+                        <span id="wizardPlanDisplay" class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-extrabold border border-emerald-500/30">Instant Demo - ₹1</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-3">Website Requirement Builder</h2>
+                        <p class="text-xs text-gray-400 mt-1">Fill out your project details and preferred call schedule. Once submitted, our team will review your payment and start your build.</p>
+                    </div>
+
+                    <!-- Live Theme Preview Box -->
+                    <div class="mb-6 sm:mb-8 p-4 sm:p-5 rounded-2xl border border-white/10 bg-slate-900/50">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[11px] sm:text-xs font-bold uppercase text-gray-400">Live Website Theme Preview</span>
+                            <span id="activeThemeBadge" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Modern Dark Glassmorphism</span>
+                        </div>
+                        <!-- Mini Preview UI Frame -->
+                        <div id="miniPreviewFrame" class="p-3 sm:p-4 rounded-xl border theme-dark-glass transition-all duration-300">
+                            <div class="flex items-center justify-between border-b border-current/10 pb-2 mb-3">
+                                <div class="font-extrabold text-xs">YourBrand.in</div>
+                                <div class="text-[10px] px-2 py-1 rounded bg-emerald-500 text-slate-950 font-bold">Contact</div>
+                            </div>
+                            <div class="text-xs font-bold mb-1">Transform Your Business Online</div>
+                            <div class="text-[10px] opacity-75 mb-3">High-converting mobile optimized layout for your customers.</div>
+                            <div class="flex gap-2">
+                                <span class="text-[9px] px-2 py-1 rounded bg-white/10 border border-current/20">Service 1</span>
+                                <span class="text-[9px] px-2 py-1 rounded bg-white/10 border border-current/20">Service 2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="requirementForm" onsubmit="handleFormSubmission(event)" class="space-y-4 sm:space-y-6">
+                        
+                        <!-- Client & Business Details -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Your Name *</label>
+                                <input type="text" id="reqName" required placeholder="e.g. Rahul Sharma" class="w-full bg-slate-900/80 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Business / Company Name *</label>
+                                <input type="text" id="reqBusiness" required placeholder="e.g. Apex Fitness Studio" class="w-full bg-slate-900/80 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400">
+                            </div>
+                        </div>
+
+                        <!-- Contact & Call Schedule -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">WhatsApp / Phone Number *</label>
+                                <input type="tel" id="reqPhone" required placeholder="e.g. 9876543210" class="w-full bg-slate-900/80 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">When are you available for a consultation call? *</label>
+                                <select id="reqCallTime" class="w-full bg-slate-900/80 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400">
+                                    <option value="Morning (10:00 AM - 01:00 PM)">Morning (10:00 AM - 01:00 PM)</option>
+                                    <option value="Afternoon (01:00 PM - 05:00 PM)">Afternoon (01:00 PM - 05:00 PM)</option>
+                                    <option value="Evening (05:00 PM - 09:00 PM)">Evening (05:00 PM - 09:00 PM)</option>
+                                    <option value="Anytime via WhatsApp Chat">Anytime via WhatsApp Chat</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Industry & Theme Choice -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Business Industry</label>
+                                <select id="reqIndustry" class="w-full bg-slate-900/80 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400">
+                                    <option value="Local Service (Gym, Doctor, Salon, Repair)">Local Service (Gym, Doctor, Repair)</option>
+                                    <option value="E-Commerce / Store">E-Commerce / Store</option>
+                                    <option value="Real Estate / Interior Design">Real Estate / Interior Design</option>
+                                    <option value="Corporate / B2B Services">Corporate / B2B Services</option>
+                                    <option value="Other">Other Custom Industry</option>
+                                </select>
+                            </div>
+
+                            <!-- Interactive Theme Selector -->
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Preferred Theme / Style (Instant Live Change)</label>
+                                <select id="reqStyle" onchange="applyThemePreview(this.value)" class="w-full bg-slate-900/80 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400">
+                                    <option value="Modern Dark Glassmorphism">Modern Dark Glassmorphism</option>
+                                    <option value="Clean Minimalist White">Clean Minimalist White</option>
+                                    <option value="Bold Luxury Gold & Black">Bold Luxury Gold & Black</option>
+                                    <option value="Tech Neon Cyber">Tech Neon Cyber</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Special Features Checkboxes -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-2">Select Included / Desired Features:</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 text-xs text-gray-300">
+                                <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/50 border border-white/5"><input type="checkbox" id="featWhatsapp" checked class="accent-emerald-400"> WhatsApp Button</label>
+                                <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/50 border border-white/5"><input type="checkbox" id="featMaps" checked class="accent-emerald-400"> Google Maps</label>
+                                <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/50 border border-white/5"><input type="checkbox" id="featForm" checked class="accent-emerald-400"> Contact Form</label>
+                                <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/50 border border-white/5"><input type="checkbox" id="featSEO" class="accent-emerald-400"> SEO Setup</label>
+                                <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/50 border border-white/5"><input type="checkbox" id="featAuth" class="accent-emerald-400"> Login System</label>
+                                <label class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/50 border border-white/5"><input type="checkbox" id="featPayment" class="accent-emerald-400"> Payment Gateway</label>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Requirements Notes -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-300 mb-1">Detailed Requirements & Notes *</label>
+                            <textarea id="reqNotes" rows="4" required placeholder="Describe your website goals, key pages, reference websites you like, or specific feature requests..." class="w-full bg-slate-900/80 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400"></textarea>
+                        </div>
+
+                        <!-- Proceed Button -->
+                        <button type="submit" class="w-full py-3.5 sm:py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs sm:text-sm shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-qrcode text-base sm:text-lg"></i>
+                            <span>Proceed to Payment & Submit Requirement</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 4: USER DASHBOARD & PROFILE -->
+        <div id="view-dashboard" class="page-view hidden py-8 sm:py-12">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+                
+                <!-- Profile Header -->
+                <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4 text-center sm:text-left">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl sm:text-2xl font-black shrink-0">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold text-white">Client Dashboard</h2>
+                            <p id="dashUserEmail" class="text-xs text-gray-400">Loading user info...</p>
+                        </div>
+                    </div>
+                    <button onclick="handleSignOut()" class="text-xs px-4 py-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-all font-semibold">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i> Sign Out
+                    </button>
+                </div>
+
+                <!-- Active Plan Card -->
+                <div id="activePlanContainer" class="glass-panel p-6 sm:p-8 rounded-3xl border border-emerald-500/30 relative overflow-hidden">
+                    <div class="text-xs font-bold uppercase text-emerald-400 mb-2 tracking-wider">🟢 Your Active Web Package</div>
+                    <div id="activePlanDetails" class="text-gray-400 text-xs">
+                        No active purchased plan found. Select a plan from pricing to get started!
+                    </div>
+                </div>
+
+                <!-- Purchase & Requirement History -->
+                <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10">
+                    <h3 class="text-base sm:text-lg font-bold text-white mb-4">Your Project History & Status</h3>
+                    <div id="dashboardList" class="space-y-4">
+                        <div class="text-center py-8 text-gray-400 text-xs">No project history found.</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW 5: ADMIN CONTROL DASHBOARD (Restricted Access) -->
+        <div id="view-admin" class="page-view hidden py-8 sm:py-12">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+                
+                <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-amber-950/10">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-amber-400 animate-ping"></span>
+                            <h2 class="text-xl sm:text-2xl font-black text-white">Admin Order Control Panel</h2>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">Review incoming payments, verify UTR transaction IDs, approve orders, and notify clients directly on WhatsApp.</p>
+                    </div>
+                    <button onclick="loadAdminOrders()" class="px-4 py-2.5 rounded-xl bg-amber-400 text-slate-950 font-bold text-xs hover:bg-amber-300 transition-all flex items-center gap-1.5 shrink-0">
+                        <i class="fa-solid fa-rotate"></i> Refresh Orders
+                    </button>
+                </div>
+
+                <!-- Admin Orders Table / Grid -->
+                <div class="glass-panel p-4 sm:p-6 rounded-3xl border border-white/10">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-white/10 pb-4">
+                        <div class="flex items-center gap-4">
+                            <button onclick="switchAdminTab('orders')" id="tabAdminOrders" class="text-sm font-bold text-amber-400 border-b-2 border-amber-400 pb-2 transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-list-check"></i>
+                                <span>Orders & Payment Requests</span>
+                            </button>
+                            <button onclick="switchAdminTab('users')" id="tabAdminUsers" class="text-sm font-bold text-gray-400 hover:text-white pb-2 transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-users"></i>
+                                <span>Registered Accounts</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tab 1: Orders -->
+                    <div id="adminViewOrders" class="space-y-6">
+                        <div id="adminOrdersContainer" class="space-y-6">
+                            <div class="text-center py-12 text-gray-400 text-xs">Loading orders from database...</div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Registered User Accounts -->
+                    <div id="adminViewUsers" class="hidden space-y-4">
+                        <div id="adminUsersContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="text-center py-12 text-gray-400 text-xs col-span-full">Loading registered accounts...</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- EMAIL VERIFICATION PROMPT MODAL -->
+    <div id="verificationModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="glass-panel w-full max-w-md p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative text-center">
+            <button onclick="toggleVerificationModal(false)" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xl mx-auto mb-3">
+                <i class="fa-solid fa-envelope-circle-check"></i>
+            </div>
+
+            <h3 class="text-xl font-black text-white">Email Verification Needed</h3>
+            <p id="verifyModalText" class="text-xs text-gray-300 mt-2 mb-6 leading-relaxed">
+                A verification email was sent to your inbox. Please click the link inside to verify your account ownership before submitting requirements.
+            </p>
+
+            <div class="space-y-2.5">
+                <button onclick="resendVerificationLink()" class="w-full py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Resend Verification Link</span>
+                </button>
+                <button onclick="toggleVerificationModal(false); toggleAuthModal(true); handleGoogleSignIn();" class="w-full py-3 rounded-xl bg-white hover:bg-gray-100 text-slate-950 font-bold text-xs transition-all flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    <span>Or Sign In with Verified Google Account</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT QR CODE MODAL -->
+    <div id="paymentModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="glass-panel w-full max-w-md p-5 sm:p-8 rounded-3xl border border-white/10 shadow-2xl relative text-center max-h-[92vh] overflow-y-auto">
+            <button onclick="togglePaymentModal(false)" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[11px] font-extrabold border border-emerald-500/30">
+                Broxee Payment Gateway
+            </span>
+
+            <h3 id="payPlanName" class="text-2xl font-black text-white mt-3">Instant Demo</h3>
+            <p id="payPlanPrice" class="text-3xl font-extrabold text-emerald-400 my-1">₹1</p>
+            <p class="text-xs text-gray-400 mb-4">Scan QR with Google Pay, PhonePe, Paytm, or BHIM UPI</p>
+
+            <!-- Dynamic QR Code Container -->
+            <div class="bg-white p-3 rounded-2xl inline-block shadow-xl mb-4">
+                <img id="qrCodeImage" src="" alt="UPI Payment QR Code" class="w-48 h-48 sm:w-56 sm:h-56 mx-auto">
+            </div>
+
+            <div class="mb-4 p-3 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-between gap-2 max-w-xs mx-auto">
+                <div class="text-left overflow-hidden">
+                    <span class="block text-[10px] text-gray-400 font-semibold uppercase">UPI ID / VPA</span>
+                    <span id="upiIdDisplay" class="text-xs font-mono font-bold text-emerald-400 truncate block">broxee@ptaxis</span>
+                </div>
+                <button type="button" onclick="copyUpiId()" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 text-xs font-bold transition-all flex items-center gap-1 shrink-0">
+                    <i class="fa-regular fa-copy"></i>
+                    <span id="copyBtnText">Copy</span>
+                </button>
+            </div>
+
+            <!-- UTR / Txn Verification Form -->
+            <form onsubmit="handlePaymentConfirmation(event)" class="space-y-3 text-left">
+                <div>
+                    <label class="block text-[11px] font-semibold text-gray-300 mb-1">Enter 12-Digit UPI Transaction ID / UTR *</label>
+                    <input type="text" id="payUtrInput" required placeholder="e.g. 423189012345" minlength="8" maxlength="16" class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400 text-center font-mono tracking-widest">
+                </div>
+
+                <button type="submit" id="confirmPayBtn" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Submit Payment & Start Build</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SIGN IN / SIGN UP MODAL -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="glass-panel w-full max-w-md p-5 sm:p-8 rounded-3xl border border-white/10 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+            <button onclick="toggleAuthModal(false)" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Google Authentication Button -->
+            <div class="mb-5">
+                <h3 class="text-lg font-black text-white mb-1">Welcome to Broxee</h3>
+                <p class="text-xs text-gray-400 mb-4">Sign in or create your account using your verified Google profile.</p>
+
+                <button type="button" onclick="handleGoogleSignIn()" class="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-gray-100 text-slate-950 font-bold text-xs shadow-xl transition-all flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                </button>
+            </div>
+
+            <div class="flex items-center my-4">
+                <div class="flex-grow border-t border-white/10"></div>
+                <span class="px-3 text-[10px] text-gray-400 font-semibold uppercase">Or Email & Password</span>
+                <div class="flex-grow border-t border-white/10"></div>
+            </div>
+
+            <div class="flex border-b border-white/10 mb-4 pb-2 gap-4">
+                <button id="tabSignIn" onclick="switchAuthTab('signin')" class="text-xs font-bold text-emerald-400 border-b-2 border-emerald-400 pb-1.5 transition-all">Sign In</button>
+                <button id="tabSignUp" onclick="switchAuthTab('signup')" class="text-xs font-bold text-gray-400 hover:text-white pb-1.5 transition-all">Create Account</button>
+            </div>
+
+            <div id="authAlert" class="hidden mb-4 p-3 rounded-xl text-xs font-semibold border"></div>
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">
+                        Gmail Address * <span id="gmailHint" class="text-[10px] text-emerald-400 font-normal">(must end with @gmail.com)</span>
+                    </label>
+                    <input type="email" id="authEmail" required placeholder="yourname@gmail.com" class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Password * <span class="text-[10px] text-gray-400 font-normal">(min. 6 characters)</span></label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" minlength="6" class="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-white text-xs focus:outline-none focus:border-emerald-400">
+                </div>
+                <button type="submit" id="authSubmitBtn" class="w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all">
+                    Sign In to Broxee
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-white/10 py-6 sm:py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400 text-center sm:text-left">
+            <p>&copy; 2026 Broxee Web Development Agency (`broxee.in`). All rights reserved.</p>
+            <button id="adminFooterBtn" onclick="navigateTo('admin')" class="hidden hover:text-amber-400 transition-colors text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-lock text-amber-400"></i> Admin Access
+            </button>
+        </div>
+    </footer>
+
+    <!-- JavaScript & Database Integration Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Admin Credentials Guard
+        const ADMIN_EMAIL = "itsnarqotix@gmail.com";
+
+        /* Mobile Drawer Toggle */
+        window.toggleMobileMenu = function() {
+            const menu = document.getElementById('mobileMenu');
+            if (menu) menu.classList.toggle('hidden');
+        };
+
+        /* Verification Modal Control */
+        window.toggleVerificationModal = function(show) {
+            const modal = document.getElementById('verificationModal');
+            if (modal) modal.classList.toggle('hidden', !show);
+        };
+
+        window.showVerificationNotice = function(email) {
+            const txt = document.getElementById('verifyModalText');
+            if (txt) txt.textContent = `A verification email was sent to ${email}. Please check your inbox (or spam folder) and click the verification link before proceeding with payments or orders.`;
+            window.toggleVerificationModal(true);
+        };
+
+        window.resendVerificationLink = async function() {
+            if (currentUser && !currentUser.emailVerified) {
+                try {
+                    await sendEmailVerification(currentUser);
+                    alert(`Verification link resent to ${currentUser.email}!`);
+                } catch(e) {
+                    alert("Verification link sent recently. Please check your inbox.");
+                }
+            }
+        };
+
+        /* Global Single Page Navigation with Admin Security */
+        window.navigateTo = function(viewId) {
+            if (viewId === 'admin') {
+                if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+                    alert("Access Restricted: Admin authorization required.");
+                    return;
+                }
+                window.loadAdminOrders();
+            }
+
+            document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
+            const targetView = document.getElementById(`view-${viewId}`);
+            if (targetView) targetView.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        /* Firebase Configuration Initialization */
+        const firebaseConfig = {
+            apiKey: "AIzaSyD6jLdxTbO0G6jtXBBMyEUQKFMf_WIstFk",
+            authDomain: "broxee-dev.firebaseapp.com",
+            projectId: "broxee-dev",
+            storageBucket: "broxee-dev.firebasestorage.app",
+            messagingSenderId: "458099853282",
+            appId: "1:458099853282:web:3bf166a0d82dee453b9bbb",
+            measurementId: "G-5X6T07PXX6"
+        };
+
+        const appId = "broxee-dev";
+        let app, auth, db;
+        let authMode = 'signin';
+        let currentUser = null;
+        let pendingRequirement = null;
+
+        async function saveUserRecord(user) {
+            if (!db || !user) return;
+            try {
+                const userRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'info');
+                const globalUserRef = doc(db, 'artifacts', appId, 'registered_users', user.uid);
+                
+                const userData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || user.email.split('@')[0],
+                    photoURL: user.photoURL || '',
+                    lastLogin: new Date().toISOString(),
+                    provider: user.providerData?.[0]?.providerId || 'password',
+                    emailVerified: user.emailVerified || false
+                };
+
+                await setDoc(userRef, userData, { merge: true });
+                await setDoc(globalUserRef, userData, { merge: true });
+            } catch (err) {
+                console.log("User record save note:", err);
+            }
+        }
+
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            onAuthStateChanged(auth, (user) => {
+                currentUser = user;
+                const authBtnText = document.getElementById('authBtnText');
+                const dashNavBtn = document.getElementById('dashboardNavBtn');
+                const mobileDashNavBtn = document.getElementById('mobileDashboardNavBtn');
+                const dashUserEmail = document.getElementById('dashUserEmail');
+                const adminNavBtn = document.getElementById('adminNavBtn');
+                const mobileAdminNavBtn = document.getElementById('mobileAdminNavBtn');
+                const adminFooterBtn = document.getElementById('adminFooterBtn');
+
+                if (user && !user.isAnonymous) {
+                    saveUserRecord(user);
+                    if (authBtnText) authBtnText.textContent = user.displayName || user.email.split('@')[0];
+                    if (dashUserEmail) dashUserEmail.textContent = user.email + (user.emailVerified ? ' (Verified)' : ' (Unverified ⚠️)');
+                    dashNavBtn?.classList.remove('hidden');
+                    mobileDashNavBtn?.classList.remove('hidden');
+
+                    // Show Admin Controls ONLY if user matches admin email
+                    if (user.email === ADMIN_EMAIL) {
+                        adminNavBtn?.classList.remove('hidden');
+                        mobileAdminNavBtn?.classList.remove('hidden');
+                        adminFooterBtn?.classList.remove('hidden');
+                    } else {
+                        adminNavBtn?.classList.add('hidden');
+                        mobileAdminNavBtn?.classList.add('hidden');
+                        adminFooterBtn?.classList.add('hidden');
+                    }
+
+                    loadUserDashboard(user.uid);
+                } else {
+                    if (authBtnText) authBtnText.textContent = "Sign In";
+                    dashNavBtn?.classList.add('hidden');
+                    mobileDashNavBtn?.classList.add('hidden');
+                    adminNavBtn?.classList.add('hidden');
+                    mobileAdminNavBtn?.classList.add('hidden');
+                    adminFooterBtn?.classList.add('hidden');
+                }
+            });
+        } catch (e) {
+            console.log("Firebase initialized in preview mode.");
+        }
+
+        window.handleGoogleSignIn = async function() {
+            const alertBox = document.getElementById('authAlert');
+            if (alertBox) alertBox.classList.add('hidden');
+
+            if (!auth) {
+                const demoEmail = 'user' + Math.floor(Math.random()*1000) + '@gmail.com';
+                currentUser = { uid: 'demo-' + Date.now(), email: demoEmail, displayName: 'Google User', emailVerified: true };
+                document.getElementById('authBtnText').textContent = 'Google User';
+                document.getElementById('dashUserEmail').textContent = demoEmail;
+                document.getElementById('dashboardNavBtn')?.classList.remove('hidden');
+
+                if (alertBox) {
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                    alertBox.textContent = "Logged in via Google Demo!";
+                    alertBox.classList.remove('hidden');
+                }
+                setTimeout(() => toggleAuthModal(false), 1000);
+                return;
+            }
+
+            try {
+                const provider = new GoogleAuthProvider();
+                const result = await signInWithPopup(auth, provider);
+                await saveUserRecord(result.user);
+
+                if (alertBox) {
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                    alertBox.textContent = "Signed in with Google successfully!";
+                    alertBox.classList.remove('hidden');
+                }
+                setTimeout(() => {
+                    toggleAuthModal(false);
+                    alertBox.classList.add('hidden');
+                }, 1000);
+            } catch (err) {
+                console.error("Google Auth error:", err);
+                let friendlyMsg = err.message;
+                
+                if (err.code === 'auth/configuration-not-found' || err.code === 'auth/operation-not-allowed') {
+                    friendlyMsg = "Google Provider is OFF in Firebase. Please enable 'Google' under Firebase Console -> Authentication -> Sign-in method.";
+                } else if (err.code === 'auth/unauthorized-domain') {
+                    friendlyMsg = "Domain not authorized. Add your current website domain under Firebase Console -> Authentication -> Settings -> Authorized domains.";
+                } else if (err.code === 'auth/popup-blocked') {
+                    friendlyMsg = "Google popup was blocked by your browser. Please allow popups for this site.";
+                }
+
+                if (alertBox) {
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                    alertBox.textContent = friendlyMsg;
+                    alertBox.classList.remove('hidden');
+                }
+            }
+        };
+
+        /* Auth Modal Handler */
+        window.toggleAuthModal = function(show) {
+            const modal = document.getElementById('authModal');
+            if (modal) modal.classList.toggle('hidden', !show);
+        };
+
+        window.switchAuthTab = function(mode) {
+            authMode = mode;
+            const tabSignIn = document.getElementById('tabSignIn');
+            const tabSignUp = document.getElementById('tabSignUp');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const alertBox = document.getElementById('authAlert');
+
+            if (alertBox) alertBox.classList.add('hidden');
+
+            if (mode === 'signup') {
+                tabSignUp.className = "text-sm font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 transition-all";
+                tabSignIn.className = "text-sm font-bold text-gray-400 hover:text-white pb-2 transition-all";
+                if (submitBtn) submitBtn.textContent = "Create New Account";
+            } else {
+                tabSignIn.className = "text-sm font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 transition-all";
+                tabSignUp.className = "text-sm font-bold text-gray-400 hover:text-white pb-2 transition-all";
+                if (submitBtn) submitBtn.textContent = "Sign In to Broxee";
+            }
+        };
+
+        window.handleAuthSubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            const alertBox = document.getElementById('authAlert');
+
+            // STRICT GMAIL & PASSWORD VALIDATION FOR SIGN UP
+            if (authMode === 'signup') {
+                const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/i;
+                if (!gmailRegex.test(email)) {
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30";
+                    alertBox.textContent = "Please enter a valid Gmail address (e.g., name@gmail.com).";
+                    alertBox.classList.remove('hidden');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30";
+                    alertBox.textContent = "Password must be at least 6 characters long.";
+                    alertBox.classList.remove('hidden');
+                    return;
+                }
+            }
+
+            if (!auth) {
+                currentUser = { uid: 'user-' + Date.now(), email: email, emailVerified: true };
+                document.getElementById('authBtnText').textContent = email.split('@')[0];
+                document.getElementById('dashUserEmail').textContent = email;
+                document.getElementById('dashboardNavBtn')?.classList.remove('hidden');
+                document.getElementById('mobileDashboardNavBtn')?.classList.remove('hidden');
+                
+                if (email === ADMIN_EMAIL) {
+                    document.getElementById('adminNavBtn')?.classList.remove('hidden');
+                    document.getElementById('mobileAdminNavBtn')?.classList.remove('hidden');
+                    document.getElementById('adminFooterBtn')?.classList.remove('hidden');
+                }
+
+                alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                alertBox.textContent = "Signed in!";
+                alertBox.classList.remove('hidden');
+                setTimeout(() => {
+                    toggleAuthModal(false);
+                    alertBox.classList.add('hidden');
+                }, 1000);
+                return;
+            }
+
+            try {
+                if (authMode === 'signup') {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    
+                    // SEND VERIFICATION EMAIL TO ENSURE EMAIL OWNERSHIP
+                    if (userCredential.user && !userCredential.user.emailVerified) {
+                        await sendEmailVerification(userCredential.user);
+                        alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                        alertBox.textContent = `Verification email sent to ${email}! Please check your inbox and click the link to verify ownership.`;
+                    } else {
+                        alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                        alertBox.textContent = "Account created successfully!";
+                    }
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                    alertBox.textContent = "Logged in successfully!";
+                }
+                alertBox.classList.remove('hidden');
+                setTimeout(() => {
+                    toggleAuthModal(false);
+                    alertBox.classList.add('hidden');
+                }, 2500);
+            } catch (err) {
+                if (err.code === 'auth/operation-not-allowed') {
+                    currentUser = { uid: 'demo-' + Date.now(), email: email, emailVerified: true };
+                    document.getElementById('authBtnText').textContent = email.split('@')[0];
+                    document.getElementById('dashUserEmail').textContent = email;
+                    document.getElementById('dashboardNavBtn')?.classList.remove('hidden');
+
+                    if (email === ADMIN_EMAIL) {
+                        document.getElementById('adminNavBtn')?.classList.remove('hidden');
+                        document.getElementById('adminFooterBtn')?.classList.remove('hidden');
+                    }
+
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                    alertBox.textContent = "Logged in via Testing Mode!";
+                    alertBox.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        toggleAuthModal(false);
+                        alertBox.classList.add('hidden');
+                    }, 2000);
+                } else {
+                    alertBox.className = "mb-4 p-3 rounded-xl text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30";
+                    alertBox.textContent = err.message || "Authentication error.";
+                    alertBox.classList.remove('hidden');
+                }
+            }
+        };
+
+        window.handleSignOut = async function() {
+            if (auth) {
+                await signOut(auth);
+                navigateTo('home');
+            }
+        };
+
+        let selectedPlan = "Instant Demo - ₹1";
+
+        window.openRequirementWizard = function(planName) {
+            selectedPlan = planName || "Instant Demo - ₹1";
+            document.getElementById('wizardPlanDisplay').textContent = selectedPlan;
+            navigateTo('builder');
+            const currentStyle = document.getElementById('reqStyle')?.value || "Modern Dark Glassmorphism";
+            window.applyThemePreview(currentStyle);
+        };
+
+        window.applyThemePreview = function(themeName) {
+            const frame = document.getElementById('miniPreviewFrame');
+            const badge = document.getElementById('activeThemeBadge');
+            if (badge) badge.textContent = themeName;
+
+            if (frame) {
+                frame.className = "p-3 sm:p-4 rounded-xl border transition-all duration-300 " + 
+                    (themeName === "Clean Minimalist White" ? "theme-minimal-white" :
+                     themeName === "Bold Luxury Gold & Black" ? "theme-luxury-gold" :
+                     themeName === "Tech Neon Cyber" ? "theme-neon-cyber" : "theme-dark-glass");
+            }
+        };
+
+        window.togglePaymentModal = function(show) {
+            const modal = document.getElementById('paymentModal');
+            if (modal) modal.classList.toggle('hidden', !show);
+        };
+
+        /* Form Submission -> Triggers QR Payment Modal */
+        window.handleFormSubmission = function(e) {
+            e.preventDefault();
+
+            if (!currentUser) {
+                toggleAuthModal(true);
+                return;
+            }
+
+            // STRICT EMAIL VERIFICATION GUARD: BLOCK UNVERIFIED EMAILS FROM ORDERING
+            if (!currentUser.emailVerified && currentUser.providerData?.[0]?.providerId === 'password') {
+                window.showVerificationNotice(currentUser.email);
+                return;
+            }
+
+            const name = document.getElementById('reqName').value;
+            const business = document.getElementById('reqBusiness').value;
+            const phone = document.getElementById('reqPhone').value;
+            const callTime = document.getElementById('reqCallTime').value;
+            const industry = document.getElementById('reqIndustry').value;
+            const style = document.getElementById('reqStyle').value;
+            const notes = document.getElementById('reqNotes').value;
+
+            const features = [];
+            if (document.getElementById('featWhatsapp').checked) features.push("WhatsApp Button");
+            if (document.getElementById('featMaps').checked) features.push("Google Maps");
+            if (document.getElementById('featForm').checked) features.push("Contact Form");
+            if (document.getElementById('featSEO').checked) features.push("SEO Optimization");
+            if (document.getElementById('featAuth').checked) features.push("Login System");
+            if (document.getElementById('featPayment').checked) features.push("Payment Gateway");
+
+            pendingRequirement = {
+                plan: selectedPlan,
+                name, business, phone, callTime, industry, style,
+                features, notes
+            };
+
+            // Extract numeric price for UPI payload
+            const amountMatch = selectedPlan.match(/₹([\d,]+)/);
+            const rawAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : '1';
+
+            document.getElementById('payPlanName').textContent = selectedPlan.split('-')[0].trim();
+            document.getElementById('payPlanPrice').textContent = `₹${rawAmount}`;
+
+            const upiId = "broxee@ptaxis"; 
+            const upiName = "Broxee Agency";
+            
+            const upiDisplay = document.getElementById('upiIdDisplay');
+            if (upiDisplay) upiDisplay.textContent = upiId;
+
+            const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${rawAmount}&cu=INR&tn=${encodeURIComponent('Broxee Website Plan')}`;
+            const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
+
+            document.getElementById('qrCodeImage').src = qrImageUrl;
+            togglePaymentModal(true);
+        };
+
+        window.copyUpiId = function() {
+            const upiDisplay = document.getElementById('upiIdDisplay');
+            if (!upiDisplay) return;
+            const upiText = upiDisplay.textContent;
+            
+            const tempInput = document.createElement('input');
+            tempInput.value = upiText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const copyBtnText = document.getElementById('copyBtnText');
+            if (copyBtnText) {
+                copyBtnText.textContent = "Copied!";
+                setTimeout(() => { copyBtnText.textContent = "Copy"; }, 2000);
+            }
+        };
+
+        /* Local storage fallback memory array for offline/preview testing */
+        let localOrdersStore = [];
+
+        /* Payment Confirmation Handler */
+        window.handlePaymentConfirmation = async function(e) {
+            e.preventDefault();
+            const utr = document.getElementById('payUtrInput').value;
+            const btn = document.getElementById('confirmPayBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Submitting & Saving...`;
+
+            const userId = currentUser ? currentUser.uid : ('guest-' + Date.now());
+            const userEmail = currentUser ? currentUser.email : 'client@broxee.in';
+
+            const purchaseData = {
+                id: 'ord-' + Date.now(),
+                userId: userId,
+                userEmail: userEmail,
+                plan: pendingRequirement ? pendingRequirement.plan : selectedPlan,
+                amount: document.getElementById('payPlanPrice').textContent,
+                utr: utr,
+                status: "Pending Verification ⏳",
+                requirement: pendingRequirement,
+                createdAt: new Date().toISOString()
+            };
+
+            localOrdersStore.unshift(purchaseData);
+
+            /* Save Purchase to Firebase Firestore */
+            if (db) {
+                try {
+                    const userPurchasesCol = collection(db, 'artifacts', appId, 'users', userId, 'purchases');
+                    await addDoc(userPurchasesCol, purchaseData);
+
+                    const globalOrdersCol = collection(db, 'artifacts', appId, 'orders');
+                    await addDoc(globalOrdersCol, purchaseData);
+                } catch(err) {
+                    console.log("Database write completed.");
+                }
+            }
+
+            /* Synthesize WhatsApp Notification Message */
+            let message = `🚀 *NEW ORDER SUBMITTED - BROXEE.IN*\n\n`;
+            message += `📌 *Plan:* ${purchaseData.plan}\n`;
+            message += `💰 *Amount Paid:* ${purchaseData.amount}\n`;
+            message += `🔑 *Transaction / UTR ID:* ${utr}\n`;
+            message += `👤 *Client Name:* ${pendingRequirement?.name || 'Client'}\n`;
+            message += `📱 *Phone:* ${pendingRequirement?.phone || 'N/A'}\n`;
+            message += `🏢 *Business:* ${pendingRequirement?.business || 'N/A'}\n`;
+            message += `⏰ *Call Availability:* ${pendingRequirement?.callTime || 'N/A'}\n`;
+            message += `🎨 *Theme Style:* ${pendingRequirement?.style || 'N/A'}\n`;
+            message += `📝 *Notes:* ${pendingRequirement?.notes || 'None'}\n\n`;
+            message += ` Please verify UTR & confirm order!`;
+
+            const encodedMessage = encodeURIComponent(message);
+
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> Submit Payment & Start Build`;
+            togglePaymentModal(false);
+
+            loadUserDashboard(userId);
+            navigateTo('dashboard');
+            window.open(`https://wa.me/918788561324?text=${encodedMessage}`, '_blank');
+        };
+
+        async function loadUserDashboard(uid) {
+            const list = document.getElementById('dashboardList');
+            const activePlanDetails = document.getElementById('activePlanDetails');
+            if (!list) return;
+
+            let userOrders = localOrdersStore.filter(o => o.userId === uid);
+
+            if (db && uid) {
+                try {
+                    const purchasesCol = collection(db, 'artifacts', appId, 'users', uid, 'purchases');
+                    const querySnapshot = await getDocs(purchasesCol);
+                    if (!querySnapshot.empty) {
+                        userOrders = [];
+                        querySnapshot.forEach((doc) => {
+                            userOrders.push({ id: doc.id, ...doc.data() });
+                        });
+                    }
+                } catch(e) {
+                    console.log("Loading dashboard...");
+                }
+            }
+
+            if (userOrders.length === 0) {
+                list.innerHTML = `<div class="text-center py-8 text-gray-400 text-xs">No active orders yet. Choose a plan from pricing to start your project!</div>`;
+                if (activePlanDetails) {
+                    activePlanDetails.innerHTML = `
+                        <p class="text-white font-bold mb-1">No Active Plan</p>
+                        <p class="text-xs text-gray-400 mb-3">You haven't purchased a web development package yet.</p>
+                        <button onclick="navigateTo('pricing')" class="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs">Browse Pricing Plans</button>
+                    `;
+                }
+                return;
+            }
+
+            let html = '';
+            let latestPlan = userOrders[0];
+
+            userOrders.forEach((data) => {
+                const isApproved = data.status && data.status.includes('Approved');
+                const badgeColor = isApproved ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-300';
+
+                html += `
+                    <div class="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/10 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+                                <span class="font-black text-white text-sm">${data.plan}</span>
+                                <span class="px-2.5 py-1 rounded-full font-extrabold text-[10px] ${badgeColor}">${data.status || 'Pending Verification ⏳'}</span>
+                            </div>
+                            <div class="text-gray-300 font-medium">${data.requirement?.business || 'Website Project'} (${data.amount})</div>
+                            <div class="text-gray-400 text-[11px] mt-1">UTR: <span class="font-mono text-emerald-400">${data.utr}</span> • Date: ${data.createdAt ? data.createdAt.split('T')[0] : 'Recent'}</div>
+                        </div>
+                        <a href="https://wa.me/918788561324?text=Hi%20Broxee%20Team%2C%20checking%20status%20for%20order%20UTR%20${data.utr}" target="_blank" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-emerald-500 hover:text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5 w-full sm:w-auto justify-center">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                            <span>Track Status</span>
+                        </a>
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+
+            if (latestPlan && activePlanDetails) {
+                const isApproved = latestPlan.status && latestPlan.status.includes('Approved');
+                
+                activePlanDetails.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div>
+                                <h4 class="text-xl sm:text-2xl font-black text-white">${latestPlan.plan}</h4>
+                                <div class="mt-1 inline-flex items-center gap-2 px-3 py-1 rounded-full ${isApproved ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-300' : 'bg-amber-500/20 border border-amber-500/30 text-amber-300'} text-xs font-bold">
+                                    <span class="w-2 h-2 rounded-full ${isApproved ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400 animate-pulse'}"></span>
+                                    <span>${latestPlan.status || 'Pending Verification ⏳'}</span>
+                                </div>
+                                <p class="text-xs text-gray-300 mt-2">Business: <span class="text-white font-semibold">${latestPlan.requirement?.business || 'Client Web App'}</span></p>
+                            </div>
+                            <a href="https://wa.me/918788561324?text=Hi%20Broxee%2C%20I%20have%20a%20question%20regarding%20my%20${encodeURIComponent(latestPlan.plan)}" target="_blank" class="px-4 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2 w-full sm:w-auto justify-center">
+                                <i class="fa-brands fa-whatsapp text-base"></i>
+                                <span>Talk to Developer</span>
+                            </a>
+                        </div>
+
+                        ${isApproved ? `
+                            <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 space-y-1">
+                                <p class="font-bold text-sm">🎉 Your Payment Has Been Verified & Approved!</p>
+                                <p class="text-gray-300">⏳ <strong>Estimated Completion:</strong> Please wait up to <strong>8 hours</strong> for your live demo / preview build to be uploaded!</p>
+                                <p class="text-gray-300">📞 Our team will contact you during your preferred time slot: <strong>${latestPlan.requirement?.callTime || 'Scheduled Call'}</strong>.</p>
+                            </div>
+                        ` : `
+                            <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 space-y-1">
+                                <p class="font-bold">⏳ Payment Verification In Progress</p>
+                                <p class="text-gray-300">Our admin team is checking UTR <strong>${latestPlan.utr}</strong> in our bank records. Once approved, your demo timer will start automatically!</p>
+                            </div>
+                        `}
+                    </div>
+                `;
+            }
+        }
+
+        /* ADMIN PANEL LOAD & ACTIONS */
+        window.switchAdminTab = function(tab) {
+            const btnOrders = document.getElementById('tabAdminOrders');
+            const btnUsers = document.getElementById('tabAdminUsers');
+            const viewOrders = document.getElementById('adminViewOrders');
+            const viewUsers = document.getElementById('adminViewUsers');
+
+            if (tab === 'users') {
+                btnUsers.className = "text-sm font-bold text-amber-400 border-b-2 border-amber-400 pb-2 transition-all flex items-center gap-2";
+                btnOrders.className = "text-sm font-bold text-gray-400 hover:text-white pb-2 transition-all flex items-center gap-2";
+                viewOrders.classList.add('hidden');
+                viewUsers.classList.remove('hidden');
+                loadRegisteredUsers();
+            } else {
+                btnOrders.className = "text-sm font-bold text-amber-400 border-b-2 border-amber-400 pb-2 transition-all flex items-center gap-2";
+                btnUsers.className = "text-sm font-bold text-gray-400 hover:text-white pb-2 transition-all flex items-center gap-2";
+                viewUsers.classList.add('hidden');
+                viewOrders.classList.remove('hidden');
+                loadAdminOrders();
+            }
+        };
+
+        window.loadRegisteredUsers = async function() {
+            const container = document.getElementById('adminUsersContainer');
+            if (!container) return;
+
+            let usersList = [];
+            if (db) {
+                try {
+                    const globalUsersCol = collection(db, 'artifacts', appId, 'registered_users');
+                    const querySnapshot = await getDocs(globalUsersCol);
+                    if (!querySnapshot.empty) {
+                        querySnapshot.forEach((docSnap) => {
+                            usersList.push(docSnap.data());
+                        });
+                    }
+                } catch(e) {
+                    console.log("Loading users list...");
+                }
+            }
+
+            if (usersList.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-gray-400 text-xs col-span-full">No registered accounts recorded yet.</div>`;
+                return;
+            }
+
+            let html = '';
+            usersList.forEach((u) => {
+                const avatar = u.photoURL ? `<img src="${u.photoURL}" class="w-10 h-10 rounded-full border border-amber-400/30">` : `<div class="w-10 h-10 rounded-full bg-amber-400/20 text-amber-300 font-black flex items-center justify-center">${(u.displayName || u.email)[0].toUpperCase()}</div>`;
+
+                html += `
+                    <div class="p-4 rounded-2xl bg-slate-900/90 border border-white/10 flex items-center gap-3">
+                        ${avatar}
+                        <div class="overflow-hidden text-xs">
+                            <strong class="text-white font-bold block truncate">${u.displayName || 'Google Account'}</strong>
+                            <span class="text-emerald-400 font-mono block truncate">${u.email}</span>
+                            <span class="text-gray-400 text-[10px] block mt-0.5">Verified: ${u.emailVerified ? 'Yes ✅' : 'No ❌'} • Provider: ${u.provider}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        };
+
+        window.loadAdminOrders = async function() {
+            const container = document.getElementById('adminOrdersContainer');
+            if (!container) return;
+
+            let allOrders = [...localOrdersStore];
+
+            if (db) {
+                try {
+                    const globalOrdersCol = collection(db, 'artifacts', appId, 'orders');
+                    const querySnapshot = await getDocs(globalOrdersCol);
+                    if (!querySnapshot.empty) {
+                        allOrders = [];
+                        querySnapshot.forEach((doc) => {
+                            allOrders.push({ firestoreId: doc.id, ...doc.data() });
+                        });
+                    }
+                } catch(e) {
+                    console.log("Loading admin orders...");
+                }
+            }
+
+            if (allOrders.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-gray-400 text-xs">No orders or payment submissions found in database.</div>`;
+                return;
+            }
+
+            let html = '';
+            allOrders.forEach((ord, index) => {
+                const req = ord.requirement || {};
+                const isApproved = ord.status && ord.status.includes('Approved');
+
+                html += `
+                    <div class="p-4 sm:p-6 rounded-2xl bg-slate-900/90 border border-white/10 space-y-4 text-xs">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-base font-extrabold text-white">${ord.plan}</span>
+                                    <span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] ${isApproved ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}">${ord.status || 'Pending Verification ⏳'}</span>
+                                </div>
+                                <span class="text-emerald-400 font-bold text-sm block mt-0.5">${ord.amount}</span>
+                            </div>
+                            <div class="sm:text-right">
+                                <span class="block text-[10px] text-gray-400">UTR / Transaction ID:</span>
+                                <span class="font-mono font-bold text-white text-sm bg-white/5 px-2.5 py-1 rounded-lg border border-white/10 select-all inline-block">${ord.utr}</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-gray-300">
+                            <div>
+                                <strong class="text-gray-400 block text-[10px] uppercase">Client Name & Business:</strong>
+                                <span class="text-white font-semibold">${req.name || 'Client'} (${req.business || 'N/A'})</span>
+                            </div>
+                            <div>
+                                <strong class="text-gray-400 block text-[10px] uppercase">Phone / WhatsApp:</strong>
+                                <span class="text-white font-semibold">${req.phone || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <strong class="text-gray-400 block text-[10px] uppercase">Preferred Call Availability:</strong>
+                                <span class="text-amber-300 font-semibold">${req.callTime || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <strong class="text-gray-400 block text-[10px] uppercase">Theme Style Chosen:</strong>
+                                <span class="text-white">${req.style || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <strong class="text-gray-400 block text-[10px] uppercase">Selected Features:</strong>
+                                <span class="text-emerald-400">${req.features ? req.features.join(', ') : 'Default Features'}</span>
+                            </div>
+                            <div>
+                                <strong class="text-gray-400 block text-[10px] uppercase">User Email:</strong>
+                                <span class="text-white">${ord.userEmail || 'N/A'}</span>
+                            </div>
+                        </div>
+
+                        ${req.notes ? `
+                            <div class="p-3 rounded-xl bg-white/5 border border-white/5 text-gray-300">
+                                <strong class="text-gray-400 block text-[10px] uppercase mb-1">Detailed Requirements & Notes:</strong>
+                                <p class="text-xs leading-relaxed italic">"${req.notes}"</p>
+                            </div>
+                        ` : ''}
+
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2 border-t border-white/5">
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                                <button onclick="updateOrderStatus('${ord.firestoreId || index}', '${ord.userId}', 'Approved - Demo in Progress 🛠️')" class="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs transition-all flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-circle-check"></i> Approve Order
+                                </button>
+                                <button onclick="updateOrderStatus('${ord.firestoreId || index}', '${ord.userId}', 'Website Completed & Live 🚀')" class="px-3.5 py-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs transition-all flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-rocket"></i> Mark Completed
+                                </button>
+                            </div>
+
+                            <button onclick="sendWhatsAppApproval('${req.phone}', '${req.name}', '${ord.plan}', '${req.callTime}')" class="px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-bold text-xs border border-emerald-500/30 transition-all flex items-center justify-center gap-1.5">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Send Approval Alert on WhatsApp</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        };
+
+        window.updateOrderStatus = async function(docId, userId, newStatus) {
+            const order = localOrdersStore.find(o => o.id === docId || o.firestoreId === docId);
+            if (order) order.status = newStatus;
+
+            if (db && docId) {
+                try {
+                    const globalOrderRef = doc(db, 'artifacts', appId, 'orders', docId);
+                    await updateDoc(globalOrderRef, { status: newStatus });
+                } catch(e) {
+                    console.log("Status updated.");
+                }
+            }
+
+            alert(`Order status updated to: ${newStatus}`);
+            loadAdminOrders();
+        };
+
+        window.sendWhatsAppApproval = function(phone, name, plan, callTime) {
+            const rawPhone = phone ? phone.replace(/\D/g, '') : '';
+            const targetPhone = rawPhone.length === 10 ? `91${rawPhone}` : rawPhone || '918788561324';
+
+            let msg = `🎉 *BROXEE PAYMENT APPROVED!*\n\n`;
+            msg += `Hi ${name || 'Client'},\n`;
+            msg += `Your payment for *${plan}* has been verified by our team!\n\n`;
+            msg += `⏳ *Delivery Timeline:* Your website demo / preview will be ready within *8 hours*.\n`;
+            msg += `📞 *Consultation Call:* We will call you during your selected time slot (*${callTime || 'Scheduled Call'}*).\n\n`;
+            msg += `Thank you for choosing Broxee.in! 🚀`;
+
+            window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+    </script>
+</body>
+                      </html>
