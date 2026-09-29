@@ -671,7 +671,7 @@
     <!-- JavaScript & Database Integration Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendEmailVerification, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Admin Credentials Guard
@@ -743,6 +743,9 @@
                 window.loadAdminOrders();
             }
 
+            // Save active view state so refreshing doesn't send user back to home
+            localStorage.setItem('broxee_active_view', viewId);
+
             document.querySelectorAll('.page-view').forEach(view => view.classList.add('hidden'));
             const targetView = document.getElementById(`view-${viewId}`);
             if (targetView) targetView.classList.remove('hidden');
@@ -794,6 +797,11 @@
             auth = getAuth(app);
             db = getFirestore(app);
 
+            // Force local browser persistence (localStorage + IndexedDB)
+            setPersistence(auth, browserLocalPersistence).catch((err) => {
+                console.log("Auth persistence initialization note:", err);
+            });
+
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     try {
@@ -832,6 +840,12 @@
                     }
 
                     loadUserDashboard(currentUser.uid);
+
+                    // Restore previous screen view if refreshing
+                    const savedView = localStorage.getItem('broxee_active_view');
+                    if (savedView && savedView !== 'home') {
+                        window.navigateTo(savedView);
+                    }
                 } else {
                     if (authBtnText) authBtnText.textContent = "Sign In";
                     dashNavBtn?.classList.add('hidden');
@@ -1295,4 +1309,4 @@
         };
     </script>
 </body>
-</html>
+                                                                                                        </html>
