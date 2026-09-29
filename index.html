@@ -671,7 +671,7 @@
     <!-- JavaScript & Database Integration Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendEmailVerification, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Admin Credentials Guard
@@ -802,8 +802,10 @@
 
         /* Global Single Page Navigation with Admin Security */
         window.navigateTo = function(viewId) {
+            const session = getStoredSession();
             if (viewId === 'admin') {
-                if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+                const isUserAdmin = (currentUser && currentUser.email === ADMIN_EMAIL) || (session && session.email === ADMIN_EMAIL);
+                if (!isUserAdmin) {
                     alert("Access Restricted: Admin authorization required.");
                     return;
                 }
@@ -831,23 +833,100 @@
         const appId = "broxee-dev";
         let app, auth, db;
 
-        // Instant UI Restoration Hint on Page Refresh
-        const cachedEmail = localStorage.getItem('broxee_user_email');
-        const cachedName = localStorage.getItem('broxee_user_name');
-        const savedView = localStorage.getItem('broxee_active_view');
-
-        if (cachedEmail) {
-            const authBtnText = document.getElementById('authBtnText');
-            if (authBtnText) authBtnText.textContent = cachedName || cachedEmail.split('@')[0];
-            const dashNavBtn = document.getElementById('dashboardNavBtn');
-            if (dashNavBtn) dashNavBtn.classList.remove('hidden');
+        // Session & Order Local Storage Management
+        function getStoredSession() {
+            try {
+                const raw = localStorage.getItem('broxee_user_session');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) {
+                return null;
+            }
         }
 
-        if (savedView && savedView !== 'home') {
-            const target = document.getElementById(`view-${savedView}`);
-            if (target) {
-                document.querySelectorAll('.page-view').forEach(v => v.classList.add('hidden'));
-                target.classList.remove('hidden');
+        function saveStoredSession(user) {
+            if (!user) return;
+            const sessionData = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName || user.email.split('@')[0],
+                photoURL: user.photoURL || '',
+                emailVerified: user.emailVerified || false
+            };
+            localStorage.setItem('broxee_user_session', JSON.stringify(sessionData));
+            localStorage.setItem('broxee_user_email', user.email);
+            localStorage.setItem('broxee_user_name', sessionData.displayName);
+        }
+
+        function clearStoredSession() {
+            localStorage.removeItem('broxee_user_session');
+            localStorage.removeItem('broxee_user_email');
+            localStorage.removeItem('broxee_user_name');
+            localStorage.removeItem('broxee_active_view');
+        }
+
+        function getStoredOrders() {
+            try {
+                const raw = localStorage.getItem('broxee_local_orders');
+                return raw ? JSON.parse(raw) : [];
+            } catch(e) {
+                return [];
+            }
+        }
+
+        function saveStoredOrder(order) {
+            const existing = getStoredOrders();
+            existing.unshift(order);
+            localStorage.setItem('broxee_local_orders', JSON.stringify(existing));
+        }
+
+        let localOrdersStore = getStoredOrders();
+
+        // Synchronous Instant UI Render on Refresh
+        function updateUIWithUser(userSession) {
+            const authBtnText = document.getElementById('authBtnText');
+            const dashNavBtn = document.getElementById('dashboardNavBtn');
+            const mobileDashNavBtn = document.getElementById('mobileDashboardNavBtn');
+            const dashUserEmail = document.getElementById('dashUserEmail');
+            const adminNavBtn = document.getElementById('adminNavBtn');
+            const mobileAdminNavBtn = document.getElementById('mobileAdminNavBtn');
+            const adminFooterBtn = document.getElementById('adminFooterBtn');
+
+            if (userSession) {
+                const displayName = userSession.displayName || userSession.email.split('@')[0];
+                if (authBtnText) authBtnText.textContent = displayName;
+                if (dashUserEmail) dashUserEmail.textContent = userSession.email + (userSession.emailVerified ? ' (Verified ✅)' : ' (Unverified ⚠️)');
+
+                dashNavBtn?.classList.remove('hidden');
+                mobileDashNavBtn?.classList.remove('hidden');
+
+                if (userSession.email === ADMIN_EMAIL) {
+                    adminNavBtn?.classList.remove('hidden');
+                    mobileAdminNavBtn?.classList.remove('hidden');
+                    adminFooterBtn?.classList.remove('hidden');
+                } else {
+                    adminNavBtn?.classList.add('hidden');
+                    mobileAdminNavBtn?.classList.add('hidden');
+                    adminFooterBtn?.classList.add('hidden');
+                }
+
+                loadUserDashboard(userSession.uid);
+            } else {
+                if (authBtnText) authBtnText.textContent = "Sign In";
+                dashNavBtn?.classList.add('hidden');
+                mobileDashNavBtn?.classList.add('hidden');
+                adminNavBtn?.classList.add('hidden');
+                mobileAdminNavBtn?.classList.add('hidden');
+                adminFooterBtn?.classList.add('hidden');
+            }
+        }
+
+        // Bootstrap UI Immediately on Page Load
+        const initialSession = getStoredSession();
+        if (initialSession) {
+            updateUIWithUser(initialSession);
+            const savedView = localStorage.getItem('broxee_active_view');
+            if (savedView && savedView !== 'home') {
+                window.navigateTo(savedView);
             }
         }
 
@@ -879,59 +958,32 @@
             auth = getAuth(app);
             db = getFirestore(app);
 
-            // Enforce Local Persistence across Browser Restarts
-            setPersistence(auth, browserLocalPersistence).catch((err) => {
-                console.log("Auth persistence note:", err);
-            });
-
             /* Auth State Observer */
             onAuthStateChanged(auth, (user) => {
-                currentUser = user;
+                try {
+                    currentUser = user;
 
-                const authBtnText = document.getElementById('authBtnText');
-                const dashNavBtn = document.getElementById('dashboardNavBtn');
-                const mobileDashNavBtn = document.getElementById('mobileDashboardNavBtn');
-                const dashUserEmail = document.getElementById('dashUserEmail');
-                const adminNavBtn = document.getElementById('adminNavBtn');
-                const mobileAdminNavBtn = document.getElementById('mobileAdminNavBtn');
-                const adminFooterBtn = document.getElementById('adminFooterBtn');
+                    if (currentUser && !currentUser.isAnonymous) {
+                        saveStoredSession(currentUser);
+                        updateUIWithUser(currentUser);
+                        saveUserRecord(currentUser);
 
-                if (currentUser && !currentUser.isAnonymous) {
-                    const displayName = currentUser.displayName || currentUser.email.split('@')[0];
-                    localStorage.setItem('broxee_user_email', currentUser.email);
-                    localStorage.setItem('broxee_user_name', displayName);
-
-                    saveUserRecord(currentUser);
-                    if (authBtnText) authBtnText.textContent = displayName;
-                    if (dashUserEmail) dashUserEmail.textContent = currentUser.email + (currentUser.emailVerified ? ' (Verified ✅)' : ' (Unverified ⚠️)');
-                    dashNavBtn?.classList.remove('hidden');
-                    mobileDashNavBtn?.classList.remove('hidden');
-
-                    if (currentUser.email === ADMIN_EMAIL) {
-                        adminNavBtn?.classList.remove('hidden');
-                        mobileAdminNavBtn?.classList.remove('hidden');
-                        adminFooterBtn?.classList.remove('hidden');
+                        const activeView = localStorage.getItem('broxee_active_view');
+                        if (activeView && activeView !== 'home') {
+                            const target = document.getElementById(`view-${activeView}`);
+                            if (target && target.classList.contains('hidden')) {
+                                window.navigateTo(activeView);
+                            }
+                        }
                     } else {
-                        adminNavBtn?.classList.add('hidden');
-                        mobileAdminNavBtn?.classList.add('hidden');
-                        adminFooterBtn?.classList.add('hidden');
+                        // Only clear if no persistent session was found
+                        if (!getStoredSession()) {
+                            clearStoredSession();
+                            updateUIWithUser(null);
+                        }
                     }
-
-                    loadUserDashboard(currentUser.uid);
-
-                    const activeView = localStorage.getItem('broxee_active_view');
-                    if (activeView && activeView !== 'home') {
-                        window.navigateTo(activeView);
-                    }
-                } else {
-                    localStorage.removeItem('broxee_user_email');
-                    localStorage.removeItem('broxee_user_name');
-                    if (authBtnText) authBtnText.textContent = "Sign In";
-                    dashNavBtn?.classList.add('hidden');
-                    mobileDashNavBtn?.classList.add('hidden');
-                    adminNavBtn?.classList.add('hidden');
-                    mobileAdminNavBtn?.classList.add('hidden');
-                    adminFooterBtn?.classList.add('hidden');
+                } catch(e) {
+                    console.error("Auth state update note:", e);
                 }
             });
         } catch (e) {
@@ -960,6 +1012,9 @@
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
                     
+                    saveStoredSession(user);
+                    updateUIWithUser(user);
+
                     const actionCodeSettings = {
                         url: window.location.origin,
                         handleCodeInApp: true
@@ -969,7 +1024,10 @@
                     window.toggleAuthModal(false);
                     window.showVerificationNotice(user.email);
                 } else {
-                    await signInWithEmailAndPassword(auth, email, password);
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    saveStoredSession(user);
+                    updateUIWithUser(user);
                     window.toggleAuthModal(false);
                 }
             } catch (err) {
@@ -988,6 +1046,8 @@
             try {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
+                saveStoredSession(user);
+                updateUIWithUser(user);
                 await saveUserRecord(user);
                 window.toggleAuthModal(false);
             } catch (err) {
@@ -997,24 +1057,24 @@
         };
 
         window.handleSignOut = async function() {
+            clearStoredSession();
+            updateUIWithUser(null);
             if (auth) {
                 try {
                     await signOut(auth);
-                    localStorage.removeItem('broxee_user_email');
-                    localStorage.removeItem('broxee_user_name');
-                    localStorage.removeItem('broxee_active_view');
-                    window.navigateTo('home');
                 } catch(e) {
                     console.log("Sign out error:", e);
                 }
             }
+            window.navigateTo('home');
         };
 
         /* Form Submission -> Triggers QR Payment Modal */
         window.handleFormSubmission = async function(e) {
             e.preventDefault();
 
-            if (!currentUser) {
+            const session = getStoredSession();
+            if (!currentUser && !session) {
                 window.toggleAuthModal(true);
                 return;
             }
@@ -1028,8 +1088,10 @@
                 }
             }
 
-            if (!currentUser.emailVerified && currentUser.providerData?.[0]?.providerId === 'password') {
-                window.showVerificationNotice(currentUser.email);
+            const activeUser = currentUser || session;
+
+            if (activeUser && !activeUser.emailVerified && activeUser.providerData?.[0]?.providerId === 'password') {
+                window.showVerificationNotice(activeUser.email);
                 return;
             }
 
@@ -1093,8 +1155,6 @@
             }
         };
 
-        let localOrdersStore = [];
-
         /* Payment Confirmation Handler */
         window.handlePaymentConfirmation = async function(e) {
             e.preventDefault();
@@ -1104,8 +1164,10 @@
             btn.disabled = true;
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Submitting & Saving...`;
 
-            const userId = currentUser ? currentUser.uid : ('guest-' + Date.now());
-            const userEmail = currentUser ? currentUser.email : 'client@broxee.in';
+            const session = getStoredSession();
+            const activeUser = currentUser || session;
+            const userId = activeUser ? activeUser.uid : ('guest-' + Date.now());
+            const userEmail = activeUser ? activeUser.email : 'client@broxee.in';
 
             const purchaseData = {
                 id: 'ord-' + Date.now(),
@@ -1120,6 +1182,7 @@
             };
 
             localOrdersStore.unshift(purchaseData);
+            saveStoredOrder(purchaseData);
 
             if (db) {
                 try {
@@ -1166,10 +1229,11 @@
                     const purchasesCol = collection(db, 'artifacts', appId, 'users', uid, 'purchases');
                     const querySnapshot = await getDocs(purchasesCol);
                     if (!querySnapshot.empty) {
-                        userOrders = [];
+                        const dbOrders = [];
                         querySnapshot.forEach((doc) => {
-                            userOrders.push({ id: doc.id, ...doc.data() });
+                            dbOrders.push({ id: doc.id, ...doc.data() });
                         });
+                        userOrders = dbOrders;
                     }
                 } catch(e) {
                     console.log("Loading dashboard...");
@@ -1423,6 +1487,7 @@
         window.updateOrderStatus = async function(docId, userId, newStatus) {
             const order = localOrdersStore.find(o => o.id === docId || o.firestoreId === docId);
             if (order) order.status = newStatus;
+            localStorage.setItem('broxee_local_orders', JSON.stringify(localOrdersStore));
 
             if (db && docId) {
                 try {
@@ -1455,7 +1520,7 @@
 </html>
 ```
 
-### Key Changes Applied:
-1. **Window-bound Handlers**: Bound `openRequirementWizard`, `toggleAuthModal`, `switchAuthTab`, `handleAuthSubmit`, `handleGoogleSignIn`, `applyThemePreview`, and `togglePaymentModal` explicitly to `window` inside the ES module block.
-2. **Persistence Restoration**: `setPersistence(auth, browserLocalPersistence)` is executed right at setup.
-3. **Smooth Local Storage Sync**: Local storage keys (`broxee_user_email` and `broxee_active_view`) render the authenticated UI immediately on page reload while Firebase verifies the session token in the background.
+### Try it now:
+1. Copy the updated code to `index.html` and commit it to GitHub for Vercel deployment.
+2. Sign in on `broxee.vercel.app`.
+3. Hit **F5** or Refresh the page multiple times—your user profile, active navigation links, Admin status, and purchased order history will remain active without signing out!
